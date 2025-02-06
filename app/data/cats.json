@@ -1,0 +1,22 @@
+[
+    {
+      "id": 1,
+      "name": "Fluffy",
+      "path": "cat1",
+      "createdAt": "2025-01-11T10:00:00Z",
+      "clothes": {
+        "top": 101,
+        "bottom": 201
+      }
+    }, 
+    {
+      "id": 2,
+      "name": "Snowy",
+      "path": "cat2",
+      "createdAt": "2025-01-12T12:00:00Z",
+      "clothes": {
+        "top": 102,
+        "bottom": 202
+      }
+    }
+  ]
