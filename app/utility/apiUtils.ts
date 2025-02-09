@@ -1,6 +1,7 @@
 // src/utils/apiHandler.ts
 import { NextResponse } from 'next/server';
 
+
 //공통 에러함수
 export const errorResponse = (message: string, status: number) => 
   NextResponse.json({ error: message }, { status });
@@ -9,6 +10,8 @@ export const errorResponse = (message: string, status: number) =>
 export const successResponse = <T>(data: T, status: number) => 
   NextResponse.json(data, { status });
 
+
+// ==========CRUD=====
 // GET
 export const getData = <T>(data: T[] | null, errorMessage: string = 'Not Found') => {
   return data ? successResponse(data, 200) : errorResponse(errorMessage, 404);
