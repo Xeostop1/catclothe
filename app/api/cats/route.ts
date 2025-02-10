@@ -2,7 +2,7 @@
 //get post 을 각각 함수로 만들 수 있음 
 import * as apiUtils from '@/app/utility/apiUtils';
 import cats from '@/app/data/cats.json'
-// Next.js 14에서 경로를 단축해서 사용하는 방식 ->루트 디렉토리(app/)를 기준으로 가져올 수 있음.
+// Next.js 14에서 경로를 단축해서 사용하는 방식 ->루트 디렉토리(app/)를 기준으로 가져올 수 있음. -> 까먹었으면 다시 적자!
 
 export async function GET() {
   return apiUtils.getData(cats, 'No cats found');
