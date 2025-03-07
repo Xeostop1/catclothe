@@ -2,6 +2,7 @@ import Image from "next/image";
 import CatList from "@/app/components/CatList";
 import ServerClothesList from "@/app/components/ServerClothesList";
 import ServerCatList from "@/app/components/ServerCatList";
+import ClothesCarousel from "@/app/components/ClothesCarousel";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <h1>🐾 Welcome to the Cat Dressing App! 🎩</h1>
       <ServerCatList/>
       <ServerClothesList />
+      <ClothesCarousel />
     </div>
   )
 }

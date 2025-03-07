@@ -11,13 +11,13 @@ type ClothesProps = {       //자식에게 줄 옷 프롭스 타입정의
 };
 
 
-// findNextClothes      다음으로만 넘어가는 함수 
-// 파라미터는 인덱스, 옷들, 타입들 전체 타입은 숫자 *** 왜 전체 타입이 숫자인가?
+// findNextClothes      이 함수가 하는 일은 무엇인가? 현재옷에서 next로 넘어갈때 그옷이 몇번째 인덱스인지 찾는 함수 
+// 파라미터는 현재 인덱스, 옷 리스트, 현재 보는 타입 전체 타입은 숫자 *** 왜 전체 타입이 숫자인가? -> 전체타입이 숫자가 아니라 파라미터 다음에 쓴거는 리턴타입을 정의해 준것 
 function findNextClothes(curIndex: number, clothes: Clothes[], type: ClothesType): number {
     const filtered = clothes.filter(item => item.type === type);    // 타입이 같은 아이템만 필터 
     const curFilteredIndex = filtered.findIndex(item => item.id === clothes[curIndex].id);      //필터된 아이템의 인덱스 -> 그 인덱스를 가진 옷들의 id만 추출 *** 여기 모르겠음
 
-    if (curFilteredIndex === -1 || curFilteredIndex === filtered.length - 1) {  //현재 필터된 인덱스의 -1 이거나 필터된 인덱스가 필터된 길이의 -1과 같다면 *** 여기 모르겠음
+    if (curFilteredIndex === -1 || curFilteredIndex === filtered.length - 1) {  //현재의 인덱스가 -1과 같거나  또는 현재 인덱스가 렝스의ㅣ -1과(마지막)이라면 
         // 마지막이면 첫 번째로 순환 -> 0으로 돌아오기 
         return clothes.findIndex(item => item.id === filtered[0].id);
     } else {
@@ -56,14 +56,22 @@ export default function ClothesCarousel({ clothes, type }: ClothesProps) {
         const prevIndex = findPrevClothes(curIndex, clothes, type);
         setcurIndex(prevIndex);
     };
+    const typeLabel = {
+        top: "👕 상의",
+        bottom: "👖 하의",
+        accessory: "🎀 악세사리",
+        hat: "🧢 모자",
+        shoes: "👟 신발"
+    }[type] || "❓ 알 수 없는 타입";
 
     return (
         <div>
-            <h2>{type === "top" ? "👕 상의" : "👖 하의"}</h2>
+        <h2>{typeLabel} - {clothes[curIndex].path}</h2>
+
             <div>
-                <button onClick={prevClothes}>⬅️</button>
-                <img src={`/images/clothes/${clothes[curIndex].path}`} alt="clothes" width={100} />
-                <button onClick={nextClothes}>➡️</button>
+                <button className="carousel-btn" onClick={prevClothes}>⬅️</button>
+                <img src={`/images/clothes/${clothes[curIndex].path}`} alt={`${clothes[curIndex].path}`} width={100} />
+                <button className="carousel-btn" onClick={nextClothes}>➡️</button>
             </div>
         </div>
     );
