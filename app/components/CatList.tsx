@@ -14,7 +14,6 @@ export default function CatList({ catListFromServer }: CatListProps) {
 
   return (
     <div>
-      <h1>🐱 고양이 리스트</h1>
       <ul>
         {cats.map((cat) => (
           <li key={cat.id}>{cat.name}</li>

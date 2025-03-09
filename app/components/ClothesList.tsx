@@ -8,12 +8,12 @@ export type ClothesListProps = {
 };
 
 export default function ClothesList({ clothesFromServer }: ClothesListProps) {
-  const [clothes, setClothes] = useState<Clothes[]>(clothesFromServer);
+  const [clothes, setClothes] = useState<Clothes[]>(clothesFromServer); 
 
   const fetchNewClothes = async () => {
     const res = await fetch("/api/clothes");
     const newClothes = await res.json();
-    setClothes(newClothes);
+    setClothes(newClothes);  
   };
 
   return (
