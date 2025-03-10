@@ -1,89 +1,77 @@
-// src/utils/apiHandler.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { createClient } from "@sanity/client";
 
-// ========== 공통 응답 함수 ==========
-// ✅ 성공 응답을 반환하는 함수
-export const successResponse = <T>(data: T, status: number) => 
-  NextResponse.json(data, { status });
+// ✅ Sanity 클라이언트 설정
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  useCdn: false,
+  apiVersion: "2025-02-06",
+  token: process.env.SANITY_API_TOKEN,
+});
 
-// ✅ 에러 응답을 반환하는 함수
-export const errorResponse = (message: string, status: number) => 
-  NextResponse.json({ error: message }, { status });
-
-// ========== CRUD 함수 ==========
-// ✅ GET: 데이터를 가져오는 함수
-export const getData = <T>(data: T[] | null, errorMessage: string = 'Not Found') => {
-  return data ? successResponse(data, 200) : errorResponse(errorMessage, 404);
+// ✅ GET: Sanity에서 데이터 가져오기
+export const getData = async (errorMessage: string = "Not Found") => {
+  try {
+    const data = await client.fetch(`*[_type == "cat"]`); // 모든 고양이 데이터 가져오기
+    return NextResponse.json(data, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  }
 };
 
-// ✅ POST: 데이터를 추가하는 함수
-export const postData = async <T extends { id: number; createdAt: string }>(
-  request: Request,
-  existingData: T[],
-  errorMessage: string = 'Invalid Data'
-) => {
+// ✅ POST: Sanity에 데이터 추가하기
+export const postData = async (request: Request, errorMessage: string = "Invalid Data") => {
   try {
-    const newData = await request.json(); //   클라이언트에서 보낸 JSON 데이터
-
-    if (!newData || Object.keys(newData).length === 0) {     
-      return errorResponse(errorMessage, 400); //   데이터가 비어 있으면 에러 반환
+    const newData = await request.json();
+    if (!newData || Object.keys(newData).length === 0) {
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
-    const newItem: T = {
-      ...newData,
-      id: Date.now(), //   고유 ID 생성
-      createdAt: new Date().toISOString(), //   생성 날짜 추가
+    const doc = {
+      _type: "cat",
+      name: newData.name,
+      path: newData.path,
+      createdAt: new Date().toISOString(),
+      clothes: {
+        top: newData.clothes.top,
+        bottom: newData.clothes.bottom,
+      },
     };
 
-    const updatedData = [...existingData, newItem]; //   기존 데이터에 추가
-
-    return successResponse(updatedData, 201);
-  } catch (err) {
-    return errorResponse('Server Error', 500);
+    const createdDoc = await client.create(doc); // Sanity에 데이터 저장
+    return NextResponse.json(createdDoc, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
 };
 
-// ✅ PATCH: 기존 데이터를 수정하는 함수
-export const patchData = async <T extends { id: number }>(
-  request: Request,
-  existingData: T[],
-  errorMessage: string = 'Not Found'
-) => {
+// ✅ PATCH: Sanity에서 데이터 수정하기
+export const patchData = async (request: Request, errorMessage: string = "Not Found") => {
   try {
-    const { id, ...updates } = await request.json(); //   요청 데이터에서 id와 수정할 데이터 분리
-
-    const index = existingData.findIndex(item => item.id === id); //   수정할 항목 찾기
-
-    if (index === -1) {
-      return errorResponse(errorMessage, 404); //   데이터가 없으면 에러 반환
+    const { id, ...updates } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const updatedItem = { ...existingData[index], ...updates }; //   기존 데이터에 업데이트 적용
-
-    const newData = [...existingData];
-    newData[index] = updatedItem;
-
-    return successResponse(updatedItem, 200);
-  } catch (err) {
-    return errorResponse('Server Error', 500);
+    const updatedDoc = await client.patch(id).set(updates).commit(); // Sanity에서 데이터 수정
+    return NextResponse.json(updatedDoc, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 };
 
-// ✅ DELETE: 데이터를 삭제하는 함수
-export const deleteData = <T extends { id: number }>(
-  existingData: T[],
-  id: number,
-  errorMessage: string = 'Not Found'
-) => {
-  const index = existingData.findIndex(item => item.id === id);
-  
-  if (index === -1) {
-    return errorResponse(errorMessage, 404);
+// ✅ DELETE: Sanity에서 데이터 삭제하기
+export const deleteData = async (request: Request, errorMessage: string = "Not Found") => {
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    await client.delete(id); // Sanity에서 데이터 삭제
+    return NextResponse.json({ message: "Deleted successfully" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
-
-  const deletedItem = existingData[index];
-
-  const newData = existingData.filter(item => item.id !== id);
-
-  return successResponse({ message: 'Deleted successfully', deletedItem, data: newData }, 200);
 };
