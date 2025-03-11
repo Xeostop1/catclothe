@@ -1,5 +1,5 @@
 export type Cat = {
-    id: number;
+    id?: string;
     name: string;
     path: string;
     createdAt: string;

@@ -1,19 +1,17 @@
-import * as apiHandler from '@/app/utility/apiUtils'; 
-import cats from '@/data/cats.json';
+import * as apiUtils from '@/app/utility/apiUtils'; // 기존 공통 API 파일 사용
 
 export async function GET() {
-  return apiHandler.getData(cats, 'No cats found'); //  공통 함수 사용
+  return apiUtils.getData(); // Sanity에서 데이터 가져오기
 }
 
 export async function POST(request: Request) {
-  return apiHandler.postData(request, cats, 'Invalid cat data'); //  공통 함수 사용
+  return apiUtils.postData(request); // Sanity에 데이터 저장
 }
 
 export async function PATCH(request: Request) {
-  return apiHandler.patchData(request, cats, 'Cat not found'); //  공통 함수 사용
+  return apiUtils.patchData(request); // Sanity 데이터 수정
 }
 
 export async function DELETE(request: Request) {
-  const { id } = await request.json();
-  return apiHandler.deleteData(cats, id, 'Cat not found'); //  공통 함수 사용
+  return apiUtils.deleteData(request); // Sanity 데이터 삭제
 }
