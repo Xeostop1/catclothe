@@ -1,16 +1,41 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Clothes } from "@/app/types/Clothes";
-import { fetchCats } from "@/app/utility/apiUtils";
+import { Cat } from "@/app/types/Cat";
+import { fetchCats } from "@/app/utility/apiUtils"; // ✅ 서버에서 고양이 데이터 불러오기
 import ClothesCarousel from "@/app/components/ClothesCarousel";
 import ServerCatList from "@/app/components/ServerCatList";
 import RandomCatGenerator from "@/app/components/RandomCatGenerator";
 
+export default function Home() {
+  const [cats, setCats] = useState<Cat[]>([]);
+  const [clothes, setClothes] = useState<Clothes[]>([]);
 
-export default async function Home() {
-  // ✅ 한 번만 fetch하여 여러 컴포넌트에서 사용
-  const res = await fetch("http://localhost:3000/api/clothes", { cache: "no-store" });
-  const clothes: Clothes[] = await res.json();
+  // ✅ 고양이와 옷 데이터 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedCats = await fetchCats();
+      setCats(fetchedCats);
 
-  const cats = await fetchCats();
+      try {
+        const res = await fetch("/api/clothes");
+        if (!res.ok) throw new Error("옷 데이터를 불러오는데 실패했습니다.");
+        const data: Clothes[] = await res.json();
+        setClothes(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // ✅ 저장된 고양이를 즉시 반영하는 함수
+  const handleCatSaved = async (newCat: Cat) => {
+    setCats((prevCats) => [...prevCats, newCat]); // **** 먼저 상태 업데이트
+    const updatedCats = await fetchCats(); // **** 서버에서 최신 데이터 가져오기
+    setCats(updatedCats); // **** 최신 데이터로 다시 업데이트
+  };
 
   return (
     <main className="p-4 space-y-6">
@@ -19,14 +44,13 @@ export default async function Home() {
       {/* ✅ 저장된 고양이 리스트 표시 */}
       <section>
         <h2 className="text-xl font-semibold">🐱 저장된 고양이 리스트</h2>
-        {/* **** 기존 ServerCatList에서 Sanity 데이터를 props로 전달 **** */}
-        <ServerCatList cats={cats} />
+        <ServerCatList cats={cats} /> {/* ✅ 상태 업데이트로 자동 반영 */}
       </section>
 
-      {/* ✅ 랜덤 고양이 생성 버튼 (옷 리스트 위로 이동) */}
+      {/* ✅ 랜덤 고양이 생성 */}
       <section>
         <h2 className="text-xl font-semibold">🎲 랜덤 고양이 생성</h2>
-        <RandomCatGenerator clothes={clothes} />
+        <RandomCatGenerator clothes={clothes} onSave={handleCatSaved} /> {/* ✅ 저장 후 UI 자동 업데이트 */}
       </section>
 
       {/* ✅ 옷 캐러셀 */}

@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { Cat } from "@/app/types/Cat";
-import MessagePopup from "./MessagePopup";
 
+type SaveCatProps = {
+  cat: Cat;
+  onSave: (newCat: Cat) => Promise<void>; // ✅ onSave prop 추가
+};
 
-export default function SaveCat({ cat }: { cat: Cat }) {
+export default function SaveCat({ cat, onSave }: SaveCatProps) { // ✅ onSave 추가
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   const saveCat = async () => {
     setIsSaving(true);
@@ -19,12 +22,16 @@ export default function SaveCat({ cat }: { cat: Cat }) {
       });
 
       if (res.ok) {
-        setMessage("🐱 저장 완료!"); // 저장 완료 메시지 표시
+        const savedCat = await res.json(); // ✅ 저장된 데이터 받아오기
+        await onSave(savedCat); // ✅ 부모(Home)에서 상태 업데이트
+
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 3000);
       } else {
-        setMessage("⚠️ 저장 실패!");
+        console.error("저장 실패:", await res.json());
       }
     } catch (error) {
-      setMessage("❌ 에러 발생!");
+      console.error("에러 발생:", error);
     }
     setIsSaving(false);
   };
@@ -35,8 +42,7 @@ export default function SaveCat({ cat }: { cat: Cat }) {
         {isSaving ? "저장 중..." : "저장"}
       </button>
 
-      {message && <MessagePopup message={message} />} {/* 메시지 팝업 표시 */}
+      {isSaved && <div className="fixed bottom-4 right-4 bg-green-500 text-white p-2 rounded">저장 완료!</div>}
     </div>
   );
 }
-
