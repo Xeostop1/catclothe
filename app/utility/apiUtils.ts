@@ -18,10 +18,12 @@ export const errorResponse = (message: string, status: number) =>
 
 // ==============================================
 
-// ✅ **** Sanity에서 고양이 데이터를 가져오는 함수 추가 ****
+//  **** Sanity에서 고양이 데이터를 가져오는 함수 추가 ****
 export const fetchCats = async () => {
   try {
     const cats = await client.fetch(`*[_type == "cat"]`); // Sanity에서 가져오기
+    console.log("fetchCats********: ", cats);
+    
     return cats; // 데이터 반환
   } catch (error) {
     console.error("고양이 목록 불러오기 실패:", error);
@@ -29,7 +31,7 @@ export const fetchCats = async () => {
   }
 };
 
-// ✅ **** getData()에서 fetchCats()를 사용하도록 수정 ****
+//  **** getData()에서 fetchCats()를 사용하도록 수정 ****
 export const getData = async () => {
   try {
     const cats = await fetchCats(); // **** fetchCats() 호출 ****
