@@ -13,18 +13,26 @@ const client = createClient({
 export const successResponse = <T>(data: T, status: number) => 
   NextResponse.json(data, { status });
 
-// 에러 응답을 반환하는 함수
 export const errorResponse = (message: string, status: number) => 
   NextResponse.json({ error: message }, { status });
 
-
-
 // ==============================================
 
-// GET: 고양이 목록 불러오기 (Sanity에서 조회)
-export const getData = async () => {
+// ✅ **** Sanity에서 고양이 데이터를 가져오는 함수 추가 ****
+export const fetchCats = async () => {
   try {
     const cats = await client.fetch(`*[_type == "cat"]`); // Sanity에서 가져오기
+    return cats; // 데이터 반환
+  } catch (error) {
+    console.error("고양이 목록 불러오기 실패:", error);
+    return []; // 에러 발생 시 빈 배열 반환
+  }
+};
+
+// ✅ **** getData()에서 fetchCats()를 사용하도록 수정 ****
+export const getData = async () => {
+  try {
+    const cats = await fetchCats(); // **** fetchCats() 호출 ****
     return successResponse(cats, 200);
   } catch (error) {
     return errorResponse("고양이 목록 불러오기 실패", 500);
@@ -74,4 +82,3 @@ export const deleteData = async (request: Request) => {
     return errorResponse("고양이 삭제 실패", 500);
   }
 };
-
