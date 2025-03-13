@@ -25,9 +25,9 @@
 
 1. **저장소 클론**
    ```bash
-   git clone https://github.com/Xeostop1/tarot.git
-   cd tarot
-   
+   git clone https://github.com/Xeostop1/catclothe.git
+
+
 🤝 기여 방법
 이 프로젝트에 기여하고 싶다면 Pull Request를 보내주세요!
 버그 리포트 및 기능 제안은 Issues 탭에서 받을 수 있습니다.
