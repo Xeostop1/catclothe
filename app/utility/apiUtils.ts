@@ -18,23 +18,25 @@ export const errorResponse = (message: string, status: number) =>
 
 // ==============================================
 
+
 //  **** Sanity에서 고양이 데이터를 가져오는 함수 추가 ****
 export const fetchCats = async () => {
   try {
-    const cats = await client.fetch(`*[_type == "cat"]`); // Sanity에서 가져오기
-    console.log("fetchCats********: ", cats);
-    
-    return cats; // 데이터 반환
+    const cats = await client.fetch(`*[_type == "cat"]`);
+    return cats;
   } catch (error) {
     console.error("고양이 목록 불러오기 실패:", error);
-    return []; // 에러 발생 시 빈 배열 반환
+    return [];
   }
 };
 
-//  **** getData()에서 fetchCats()를 사용하도록 수정 ****
+
+// api루트에서 사용 클라이 언트 요청 때 사용됌 그래서 응답을 json으로 반환해줌 
 export const getData = async () => {
   try {
-    const cats = await fetchCats(); // **** fetchCats() 호출 ****
+    console.log(" getData() 실행 중...");
+    const cats = await fetchCats(); 
+    console.log(" JSON cats:", cats); 
     return successResponse(cats, 200);
   } catch (error) {
     return errorResponse("고양이 목록 불러오기 실패", 500);
