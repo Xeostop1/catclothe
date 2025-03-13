@@ -1,7 +1,7 @@
 [
-    { "id": 101, "type": "top", "color": "#000000", "path": "/images/clothes/top1.png" },
-    { "id": 102, "type": "top", "color": "#FFFFFF", "path": "/images/clothes/top2.png" },
-    { "id": 201, "type": "bottom", "color": "#FF0000", "path": "/images/clothes/bottom1.png" },
-    { "id": 202, "type": "bottom", "color": "#00FF00", "path": "/images/clothes/bottom2.png" }
+    { "id": 101, "type": "top", "color": "#000000", "path": "top1.png" },
+    { "id": 102, "type": "top", "color": "#FFFFFF", "path": "top2.png" },
+    { "id": 201, "type": "bottom", "color": "#FF0000", "path": "bottom1.png" },
+    { "id": 202, "type": "bottom", "color": "#00FF00", "path": "bottom2.png" }
   ]
   

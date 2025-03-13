@@ -1,74 +1,88 @@
-// src/utils/apiHandler.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { createClient } from "@sanity/client";
 
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  useCdn: false,
+  apiVersion: "2025-02-06", // 최신 버전
+  token: process.env.SANITY_API_TOKEN,
+});
 
-//공통 에러함수
-export const errorResponse = (message: string, status: number) => 
-  NextResponse.json({ error: message }, { status });
-
-// 공통 성공함수
+// 성공 응답을 반환하는 함수
 export const successResponse = <T>(data: T, status: number) => 
   NextResponse.json(data, { status });
 
+export const errorResponse = (message: string, status: number) => 
+  NextResponse.json({ error: message }, { status });
 
-// ==========CRUD=====
-// GET
-export const getData = <T>(data: T[] | null, errorMessage: string = 'Not Found') => {
-  return data ? successResponse(data, 200) : errorResponse(errorMessage, 404);
-};
+// ==============================================
 
-// POST
-export const postData = async <T>(request: Request, existingData: T[], errorMessage: string = 'Invalid Data') => {
+
+//  **** Sanity에서 고양이 데이터를 가져오는 함수 추가 ****
+export const fetchCats = async () => {
   try {
-    
-    const newData = await request.json();               // 요청 데이터를 json으로 변환
-    if (!newData || !Object.keys(newData).length) {             // 데이터가 없거나, 객체안에 랭스가 0일때       
-      return errorResponse(errorMessage, 400);
-    }
-    //데이터 주소 새로 생성 -> 상태변경 인식 가능 
-    return successResponse([...existingData, newData], 201);
-  } catch (err) {
-    return errorResponse('Server Error', 500);
+    const cats = await client.fetch(`*[_type == "cat"]`);
+    return cats;
+  } catch (error) {
+    console.error("고양이 목록 불러오기 실패:", error);
+    return [];
   }
 };
 
-// 패치 함수
-export const patchData = async <T extends { id: number }>(
-  request: Request,
-  existingData: T[],
-  errorMessage: string = 'Not Found'
-) => {
+
+// api루트에서 사용 클라이 언트 요청 때 사용됌 그래서 응답을 json으로 반환해줌 
+export const getData = async () => {
   try {
-    //json에서 가져오는 데이터들을 id와 나머지 데이터를 구조분해 할당해서 각자 변수로 저장 (id, 업데이트 부분 따로 값을 가지고 옴)
+    console.log(" getData() 실행 중...");
+    const cats = await fetchCats(); 
+    console.log(" JSON cats:", cats); 
+    return successResponse(cats, 200);
+  } catch (error) {
+    return errorResponse("고양이 목록 불러오기 실패", 500);
+  }
+};
+
+// POST: 새 고양이 저장 (Sanity에 추가)
+export const postData = async (request: Request) => {
+  try {
+    const body = await request.json();
+
+    const newCat = {
+      _type: "cat",
+      name: body.name,
+      path: body.path,
+      createdAt: new Date().toISOString(), // 생성 날짜 추가
+      clothes: body.clothes,
+    };
+
+    const createdCat = await client.create(newCat); // Sanity에 저장
+    return successResponse(createdCat, 201);
+  } catch (error) {
+    return errorResponse("고양이 저장 실패", 500);
+  }
+};
+
+// PATCH: 기존 고양이 정보 수정 (Sanity에서 수정)
+export const patchData = async (request: Request) => {
+  try {
     const { id, ...updates } = await request.json();
-    //id가 있는 배열을 인덱스를 반환 
-    const index = existingData.findIndex(item => item.id === id);
-    //findIndex는 값이 없으면 -1 반환 
-    if (index === -1) {
-      return errorResponse(errorMessage, 404);
-    }
 
-    const updatedData = { ...existingData[index], ...updates };
-    //이것도 직접 수정하지 않고 새로운 배열 데이터를 생성해 준것 
-    const newData = [...existingData];
-    newData[index] = updatedData;
-
-    return successResponse(updatedData, 200);
-  } catch (err) {
-    return errorResponse('Server Error', 500);
+    const updatedCat = await client.patch(id).set(updates).commit(); // Sanity에서 수정
+    return successResponse(updatedCat, 200);
+  } catch (error) {
+    return errorResponse("고양이 수정 실패", 500);
   }
 };
 
-// 데이터 삭제 함수 (DELETE)
-export const deleteData = <T extends { id: number }>(
-  existingData: T[],
-  id: number,
-  errorMessage: string = 'Not Found'
-) => {
-  const index = existingData.findIndex(item => item.id === id);
-  if (index === -1) {
-    return errorResponse(errorMessage, 404);
-  }
+// DELETE: 고양이 삭제 (Sanity에서 삭제)
+export const deleteData = async (request: Request) => {
+  try {
+    const { id } = await request.json();
 
-  return successResponse({ message: 'Deleted successfully', data: existingData.filter(item => item.id !== id) }, 200);
+    await client.delete(id); // Sanity에서 삭제
+    return successResponse({ message: "삭제 완료" }, 200);
+  } catch (error) {
+    return errorResponse("고양이 삭제 실패", 500);
+  }
 };

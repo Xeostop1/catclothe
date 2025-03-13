@@ -19,3 +19,17 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 버튼 스타일 똑같이 지정 */
+@layer components {
+  .carousel-button {
+      @apply w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer transition;
+  }
+  .carousel-button:hover {
+      @apply bg-gray-300;
+  }
+  .carousel-button:active {
+      @apply scale-90;
+  }
+}
+
