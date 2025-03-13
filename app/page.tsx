@@ -13,7 +13,8 @@ export default function Home() {
   const [clothes, setClothes] = useState<Clothes[]>([]);
 
   //  고양이와 옷 데이터 가져오기
-  //useEffect 하는일 : 데이터를 불러오거나, 이벤트 설정, 상태 동기화에 사용
+  // 한번에 여러번 사용가능 함 
+  //###### useEffect 하는일 ###### : 데이터를 불러오거나, 이벤트 설정, 상태 동기화에 사용
   // 기본 사용 코드=========== 
   // useEffect(() => {
   //   console.log("컴포넌트가 렌더링되었어요!");
@@ -25,6 +26,9 @@ export default function Home() {
 //   useEffect(() => {
 //     console.log(`🧮 count가 변경되었습니다: ${count}`);
 //   }, [count]); // ✅ count가 변경될 때마다 실행됨
+
+// <button onClick={() => setCount(count + 1)}>+1 증가</button> 
+//=============================================================
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,14 +62,9 @@ export default function Home() {
   return (
     <main className="p-4 space-y-6">
       <h1 className="text-2xl font-bold">🐾 Welcome to Cat Dress-Up🐾</h1>
-
-      {/*  저장된 고양이 리스트 표시 */}
       <section>
-        <h2 className="text-xl font-semibold">🐱 저장된 고양이 리스트</h2>
         <CatList catListFromServer={cats} onCatDeleted={async () => setCats(await fetchCats())} /> {/*  데이터 정상 전달 */}
       </section>
-
-      {/*  랜덤 고양이 생성 */}
       <section>
         <h2 className="text-xl font-semibold">🎲 랜덤 고양이 생성</h2>
         <RandomCatGenerator clothes={clothes} onSave={handleCatSaved} /> {/*  저장 후 UI 자동 업데이트 */}

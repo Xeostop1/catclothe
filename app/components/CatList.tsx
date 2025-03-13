@@ -5,7 +5,7 @@ import { Cat } from "@/app/types/Cat";
 
 type CatListProps = {
   catListFromServer: Cat[];
-  onCatDeleted: () => Promise<void>; // ✅ 삭제 후 최신 데이터 반영
+  onCatDeleted: () => Promise<void>;
 };
 
 export default function CatList({ catListFromServer, onCatDeleted }: CatListProps) {
@@ -26,27 +26,32 @@ export default function CatList({ catListFromServer, onCatDeleted }: CatListProp
   // ✅ 고양이 삭제 기능
   const handleDelete = async (_id: string | undefined) => {
     if (!_id) {
-      console.error("삭제할 수 없는 데이터: _id가 없음");
+      console.error("🚨 삭제할 수 없는 데이터: _id가 없음");
       return;
     }
-
+  
+    console.log("🗑 삭제 요청 보냄, _id:", _id); // ✅ 삭제 요청 전에 로그 추가
+  
     try {
       const res = await fetch("/api/cats", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ _id }),
       });
-
+  
+      const result = await res.json();
+      console.log("🗑 삭제 응답:", result); // ✅ 응답 확인용 로그 추가
+  
       if (res.ok) {
-        console.log("🗑️ 삭제 성공:", _id);
         await onCatDeleted(); // ✅ 삭제 후 최신 데이터 가져오기
       } else {
-        console.error("삭제 실패:", await res.json());
+        console.error("❌ 삭제 실패:", result);
       }
     } catch (error) {
-      console.error("에러 발생:", error);
+      console.error("🚨 에러 발생:", error);
     }
   };
+  
 
   return (
     <div>

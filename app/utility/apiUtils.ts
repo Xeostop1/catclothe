@@ -30,7 +30,6 @@ export const fetchCats = async () => {
   }
 };
 
-
 // api루트에서 사용 클라이 언트 요청 때 사용됌 그래서 응답을 json으로 반환해줌 
 export const getData = async () => {
   try {
@@ -76,13 +75,26 @@ export const patchData = async (request: Request) => {
 };
 
 // DELETE: 고양이 삭제 (Sanity에서 삭제)
+// DELETE: 고양이 삭제 (Sanity에서 삭제)
 export const deleteData = async (request: Request) => {
   try {
-    const { id } = await request.json();
+    const { _id } = await request.json(); // ✅ _id로 변경
+    console.log("🗑 삭제 요청을 받음. 삭제할 _id:", _id); // ✅ 삭제 요청 로그 추가
 
-    await client.delete(id); // Sanity에서 삭제
-    return successResponse({ message: "삭제 완료" }, 200);
+    if (!_id) {
+      console.error("❌ 삭제할 _id가 없습니다!");
+      return errorResponse("삭제할 고양이 _id가 없습니다.", 400);
+    }
+
+    // ✅ Sanity에서 해당 _id의 데이터를 삭제
+    const deleteResult = await client.delete(_id);
+    console.log("✅ Sanity에서 삭제 성공:", deleteResult); // ✅ 삭제된 데이터 확인
+
+    return successResponse({ message: "삭제 완료", deletedId: _id }, 200);
   } catch (error) {
+    console.error("❌ 고양이 삭제 실패:", error); // ✅ 에러 로그 추가
     return errorResponse("고양이 삭제 실패", 500);
   }
 };
+
+

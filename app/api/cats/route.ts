@@ -1,6 +1,8 @@
 import * as apiUtils from '@/app/utility/apiUtils'; // 기존 공통 API 파일 사용
 
 export async function GET() {
+  console.log("라우터에서 실행 되는지 확인필요");
+  
   return apiUtils.getData(); // Sanity에서 데이터 가져오기
 }
 
