@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐱 고양이를 부탁해 - Cat Dress-up Web App
 
-## Getting Started
+고양이를 꾸밀 수 있는 웹 애플리케이션 **"고양이를 부탁해"**에 오신 것을 환영합니다!  
+이 프로젝트는 사용자가 다양한 옷을 조합하여 고양이를 꾸밀 수 있도록 제작되었습니다.
 
-First, run the development server:
+## 🎨 주요 기능
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- 🐾 **고양이 선택**: 여러 고양이 중 원하는 고양이를 선택할 수 있습니다.
+- 👕 **의상 변경**: 상의와 하의를 선택하여 고양이를 꾸밀 수 있습니다.
+- 🎲 **랜덤 코디**: 랜덤 버튼을 눌러 새로운 조합을 시도해볼 수 있습니다.
+- 👀 **미리보기 기능**: 선택한 코디를 저장하기 전에 확인할 수 있습니다.
+- 📥 **이미지 다운로드**: 꾸민 고양이를 이미지로 저장할 수 있습니다.
+- 📡 **Sanity 연동**: Sanity를 사용하여 고양이 및 의상 데이터를 관리합니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠 사용된 기술 스택
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **프론트엔드**: Next.js 14, React, TypeScript
+- **스타일링**: Tailwind CSS
+- **상태 관리**: useReducer
+- **데이터 관리**: JSON 파일 & Sanity API
+- **CMS(Content Management System)**: **Sanity**
+- **API**: Next.js API Routes (`route.ts`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 설치 및 실행 방법
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **저장소 클론**
+   ```bash
+   git clone https://github.com/Xeostop1/tarot.git
+   cd tarot
+   
+🤝 기여 방법
+이 프로젝트에 기여하고 싶다면 Pull Request를 보내주세요!
+버그 리포트 및 기능 제안은 Issues 탭에서 받을 수 있습니다.
